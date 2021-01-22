@@ -2,7 +2,7 @@ module Main where
 
 import           Control.Monad                        (join)
 import           Control.Applicative                  ((<$>))
-import           Controllers.Home                     (home, login, post)
+import           Platform.Home                        (home, login, post)
 import           Data.Maybe                           (fromMaybe)
 import           Network.Wai.Middleware.RequestLogger (logStdoutDev)
 import           Network.Wai.Middleware.Static        (addBase, noDots,

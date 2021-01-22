@@ -2,7 +2,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 
 
-module Controllers.Home
+module Platform.Home
     ( home
     , login
     , post
