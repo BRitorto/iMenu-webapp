@@ -36,7 +36,6 @@
     <orderEntry type="library" name="aeson-1.2.4.0" level="project" />
     <orderEntry type="library" name="classy-prelude-1.4.0" level="project" />
     <orderEntry type="library" name="postgresql-simple-0.5.3.0" level="project" />
-    <orderEntry type="library" name="jose-jwt-0.7.8" level="project" />
     <orderEntry type="library" name="slug-0.1.7" level="project" />
     <orderEntry type="library" name="wai-3.2.1.2" level="project" />
     <orderEntry type="library" name="old-locale-1.0.0.7" level="project" />
@@ -99,7 +98,6 @@
     <orderEntry type="library" name="bytestring-builder-0.10.8.1.0" level="project" />
     <orderEntry type="library" name="postgresql-libpq-0.9.4.1" level="project" />
     <orderEntry type="library" name="cereal-0.5.5.0" level="project" />
-    <orderEntry type="library" name="either-5" level="project" />
     <orderEntry type="library" name="QuickCheck-2.10.1" level="project" />
     <orderEntry type="library" name="http-api-data-0.3.7.2" level="project" />
     <orderEntry type="library" name="path-pieces-0.2.1" level="project" />
@@ -160,5 +158,24 @@
     <orderEntry type="library" name="polyparse-1.12" level="project" />
     <orderEntry type="library" name="safe-0.3.17" level="project" />
     <orderEntry type="library" name="th-expand-syns-0.4.4.0" level="project" />
+    <orderEntry type="library" name="convertible-1.1.1.0" level="project" />
+    <orderEntry type="library" name="data-has-0.3.0.0" level="project" />
+    <orderEntry type="library" name="postgresql-simple-migration-0.1.11.0" level="project" />
+    <orderEntry type="library" name="cryptohash-0.11.9" level="project" />
+    <orderEntry type="library" name="byteable-0.1.1" level="project" />
+    <orderEntry type="library" name="wai-cors-0.2.6" level="project" />
+    <orderEntry type="library" name="base-unicode-symbols-0.2.2.4" level="project" />
+    <orderEntry type="library" name="warp-tls-3.2.4.3" level="project" />
+    <orderEntry type="library" name="tls-1.4.1" level="project" />
+    <orderEntry type="library" name="tls-session-manager-0.0.0.2" level="project" />
+    <orderEntry type="library" name="asn1-types-0.3.2" level="project" />
+    <orderEntry type="library" name="asn1-encoding-0.9.5" level="project" />
+    <orderEntry type="library" name="x509-1.7.3" level="project" />
+    <orderEntry type="library" name="x509-store-1.6.6" level="project" />
+    <orderEntry type="library" name="x509-validation-1.6.10" level="project" />
+    <orderEntry type="library" name="clock-0.7.2" level="project" />
+    <orderEntry type="library" name="hourglass-0.2.11" level="project" />
+    <orderEntry type="library" name="pem-0.2.4" level="project" />
+    <orderEntry type="library" name="asn1-parse-0.9.4" level="project" />
   </component>
 </module>

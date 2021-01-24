@@ -1,32 +1,49 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DeriveGeneric #-}
-
+{-# LANGUAGE ConstraintKinds #-}
 
 module Platform.Home
-    ( home
-    , login
-    , post
+    ( main
     ) where
 
-import           Views.Home (homeView)
-import           Web.Scotty (ScottyM, get, html, json)
-import           Data.Aeson (ToJSON)
-import           GHC.Generics
+import ClassyPrelude (MonadIO, LText, fromMaybe, readMay)
+import Web.Scotty.Trans
+import Network.HTTP.Types.Status
+import Network.Wai.Handler.WarpTLS (runTLS, tlsSettings)
+import Network.Wai.Handler.Warp (defaultSettings, setPort)
+import Network.Wai (Response)
+import Network.Wai.Middleware.Cors
 
-home :: ScottyM ()
-home = get "/" homeView
+import qualified Core.Item.Controller as ItemController
+import System.Environment (lookupEnv)
 
-login :: ScottyM ()
-login = get "/login" $ html "login"
+type App r m = (ItemController.Service m, MonadIO m)
 
-{-
-  Example data structure to demonstrate JSON serialization
--}
-data Post = Post
-  { postId    :: Int
-  , postTitle :: String } deriving Generic
+main :: (App r m) => (m Response -> IO Response) -> IO ()
+main runner = do
+  port <- acquirePort
+  scottyT port runner routes
+  where
+    acquirePort = do
+      port <- fromMaybe "" <$> lookupEnv "PORT"
+      return . fromMaybe 3000 $ readMay port
 
-instance ToJSON Post
+routes :: (App r m) => ScottyT LText m ()
+routes = do
+  -- middlewares
+  middleware $ cors $ const $ Just simpleCorsResourcePolicy
+    { corsRequestHeaders = "Authorization":simpleHeaders
+    , corsMethods = "PUT":"DELETE":simpleMethods
+    }
+  options (regex ".*") $ return ()
 
-post :: ScottyM()
-post = get "/post" $ json $ Post 1 "Yello world"
+  -- errors
+  defaultHandler $ \str -> do
+    status status500
+    json str
+
+  -- feature routes
+  ItemController.routes
+  
+  -- health
+  get "/api/health" $
+    json True

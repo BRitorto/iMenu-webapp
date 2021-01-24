@@ -1,32 +1,52 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Core.Item.Service where
   
 import Core.Item.Types
-import qualified Web.Slug as WSlug
-import Web.Slug (Slug)
+import Web.Slug
+import ClassyPrelude
+import Control.Monad.Except (runExceptT, lift, throwError)
+import System.Posix.Types (EpochTime)
+import Data.Convertible (convert)
 
-getItems :: (ItemRepo m) => ItemFilter -> m [Item]
-getItems = findItems Nothing
+getItems :: (ItemRepo m) => m [Item]
+getItems = findItems
 
-getItem :: (ItemRepo m) => Slug -> m (Either ItemError Item)
+-- TODO filter items
+getItem :: (ItemRepo m) => Text -> m (Either ItemError Item)
 getItem slug = runExceptT $ do
-  result <- lift $ findItems(Just slug) Nothing (ItemFilter Nothing Nothing)
+  result <- lift findItems
   case result of
     [item] -> return item
     _ -> throwError $ ItemErrorNotFound slug
     
-createItem :: (ItemRepo m) => Item -> m (Either ItemError Item)
+--getItemsByCategory :: (ItemRepo m) => Text -> m (Either ItemError Item)
+--getItemsByCategory category = runExceptT $ do
+ -- result <- lift $ findItems Nothing (ItemFilter Nothing Nothing (Just category))
+ -- case result of
+ --   [item] -> return item
+ --   _ -> throwError $ ItemErrorNotFound category
+    
+createItem :: (ItemRepo m, TimeRepo m) => Item -> m (Either ItemError Item)
 createItem param = do 
-  slug <- genSlug (itemTitle param)
+  slug <- genSlug' (itemName param)
+  addItem param slug
   getItem slug
   
-deleteItem :: (ItemRepo m) => Slug -> m (Either ItemError ())
-deleteItem slug = runExceptT $ do
-  lift $ deleteItemBySlug slug
+--deleteItem :: (ItemRepo m) => Slug -> m (Either ItemError ())
+--deleteItem slug = runExceptT $ do
+--  lift $ deleteItemBySlug slug
 
-genSlug :: Text -> Text
-genSlug title = 
-  maybe "invalidSlug" WSlug.unSlug $ WSlug.mkSlug $ unwords [title]
-  
+genSlug' :: (TimeRepo m) => Text -> m Text
+genSlug' name = genSlug name ClassyPrelude.. convert <$> currentTime
+
+genSlug :: Text -> EpochTime -> Text
+genSlug name unixTs = maybe "invalidSlug" unSlug $ mkSlug $ ClassyPrelude.unwords [tshow unixTs, name]
+
 class (Monad m) => ItemRepo m where
-  findItems :: Maybe Slug -> ItemFilter -> m [Item]
-  deleteItemBySlug :: Slug -> m ()
+  findItems :: m [Item]
+  --deleteItemBySlug :: Slug -> m ()
+  addItem :: Item -> Text -> m ()
+  
+class (Monad m) => TimeRepo m where
+  currentTime :: m UTCTime

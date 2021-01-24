@@ -8,8 +8,10 @@ import Platform.JSONUtil
 import Web.Slug (Slug)
 
 data Item = Item
-  { itemName :: Text
+  { itemSlug :: Text
+  , itemName :: Text
   , itemDescription :: Text
+  , itemCategory :: Text
   , itemPrice :: Double
   , itemImage :: Text
   } deriving(Eq, Show)
@@ -17,9 +19,10 @@ data Item = Item
 data ItemFilter = ItemFilter
   { itemNameFilter :: Maybe Text
   , itemDescriptionFilter :: Maybe Text
+  , itemCategoryFilter :: Maybe Text
   } deriving (Eq, Show)
 
-newtype ItemError = ItemErrorNotFound Slug deriving (Eq, Show)
+newtype ItemError = ItemErrorNotFound Text deriving (Eq, Show)
 data ItemsWrapper i = ItemsWrapper { itemsWrapperItems :: [i], itemsWrapperItemsCount :: Int } deriving (Eq, Show)
 
 -- * Instances
@@ -32,6 +35,8 @@ $(commonJSONDeriveMany
 instance FromRow Item where
   fromRow = Item 
     <$> field
+    <*> field
+    <*> field
     <*> field
     <*> field
     <*> field
