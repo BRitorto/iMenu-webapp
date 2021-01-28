@@ -44,6 +44,7 @@ instance ItemController.Service AppT where
 instance ItemService.ItemRepo AppT where
   findItems = ItemDAO.findItems
   addItem = ItemDAO.addItem
+  findItem = ItemDAO.findItem
 
 instance ItemService.TimeRepo AppT where
   currentTime = liftIO getCurrentTime

@@ -1,11 +1,11 @@
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module Core.Item.Types where
 
 import ClassyPrelude (Text)
 import Database.PostgreSQL.Simple.FromRow
-import Platform.JSONUtil
-import Web.Slug (Slug)
+import Platform.Types
 
 data Item = Item
   { itemSlug :: Text
@@ -13,24 +13,36 @@ data Item = Item
   , itemDescription :: Text
   , itemCategory :: Text
   , itemPrice :: Double
-  , itemImage :: Text
+  , itemImage :: Maybe Text
   } deriving(Eq, Show)
-  
+
+data ItemIntent = ItemIntent
+  { itemIntentName :: Text
+  , itemIntentDescription :: Text
+  , itemIntentCategory :: Text
+  , itemIntentPrice :: String
+  , itemIntentImage :: Maybe Text
+  } deriving(Eq, Show)
+    
 data ItemFilter = ItemFilter
   { itemNameFilter :: Maybe Text
   , itemDescriptionFilter :: Maybe Text
   , itemCategoryFilter :: Maybe Text
   } deriving (Eq, Show)
 
-newtype ItemError = ItemErrorNotFound Text deriving (Eq, Show)
+data ItemError = ItemErrorNotFound Text | ItemErrorNotAllowed Text | ItemErrorBadJSON String deriving (Eq, Show)
 data ItemsWrapper i = ItemsWrapper { itemsWrapperItems :: [i], itemsWrapperItemsCount :: Int } deriving (Eq, Show)
+newtype ItemWrapper i = ItemWrapper { itemWrapperItem :: i } deriving (Eq, Show)
 
 -- * Instances
 
 $(commonJSONDeriveMany
   [ ''Item
+  , ''ItemIntent
   , ''ItemFilter
-  , ''ItemsWrapper])
+  , ''ItemsWrapper
+  , ''ItemWrapper
+  , ''ItemError])
 
 instance FromRow Item where
   fromRow = Item 
