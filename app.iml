@@ -184,5 +184,6 @@
     <orderEntry type="library" name="th-reify-many-0.1.8" level="project" />
     <orderEntry type="library" name="polyparse-1.12" level="project" />
     <orderEntry type="library" name="th-expand-syns-0.4.4.0" level="project" />
+    <orderEntry type="library" name="securemem-0.1.10" level="project" />
   </component>
 </module>

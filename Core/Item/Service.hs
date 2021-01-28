@@ -32,9 +32,9 @@ createItem param = do
   addItem (adaptItem param slug) slug
   getItem slug
   
---deleteItem :: (ItemRepo m) => Slug -> m (Either ItemError ())
---deleteItem slug = runExceptT $ do
---  lift $ deleteItemBySlug slug
+deleteItem :: (ItemRepo m) => Text -> m (Either ItemError ())
+deleteItem slug = runExceptT $ do
+  lift $ deleteItemBySlug slug
 
 genSlug' :: (TimeRepo m) => Text -> m Text
 genSlug' name = genSlug name ClassyPrelude.. convert <$> currentTime
@@ -60,7 +60,7 @@ class (Monad m) => ItemRepo m where
   findItems :: m [Item]
   findItemsByCategory :: Text -> m [Item]
   findItem :: Text -> m [Item]
-  --deleteItemBySlug :: Slug -> m ()
+  deleteItemBySlug :: Text -> m ()
   addItem :: Item -> Text -> m ()
   
 class (Monad m) => TimeRepo m where

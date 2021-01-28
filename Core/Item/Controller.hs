@@ -15,12 +15,18 @@ import Platform.JSONUtil
 import Text.Digestive.Form ((.:))
 import Network.HTTP.Types
 import Data.Aeson (eitherDecode)
+import Data.SecureMem
+import Network.Wai.Middleware.HttpAuth
+
+password :: SecureMem
+password = secureMemFromByteString "An7aLasi"
 
 class Monad m => Service m where
   getItems :: m [Item]
   getItem :: Text -> m (Either ItemError Item)
   createItem :: ItemIntent -> m (Either ItemError Item)
   getItemsByCategory :: Text -> m (Either ItemError [Item])
+  deleteItem :: Text -> m (Either ItemError ())
 
 routes :: (Service m, MonadIO m) => ScottyT LText m ()
 routes = do 
@@ -44,13 +50,14 @@ routes = do
       Right i -> do
         result <- stopIfError itemErrorHandler $ createItem i
         json $ ItemWrapper result
+  
+  delete "/api/items/:slug" $ do
+    slug <- param "slug"
+    stopIfError itemErrorHandler $ deleteItem slug
+    json $ asText "Item deleted"
 
-mayParam :: (ScottyError e, Monad m) => LText -> ActionT e m (Maybe Text)
-mayParam name = (Just <$> param name) `rescue` const (return Nothing)
-
-parseItemFilter :: (ScottyError e, Monad m) => ActionT e m ItemFilter
-parseItemFilter = ItemFilter <$> mayParam "name" <*> mayParam "description" <*> mayParam "category"
-
+  middleware $ basicAuth (\u p -> return $ u == "user" && secureMemFromByteString p == password) "hello"
+  
 --- * Errors
 
 itemErrorHandler :: (ScottyError e, Monad m) => ItemError -> ActionT e m ()

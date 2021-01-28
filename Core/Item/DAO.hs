@@ -56,6 +56,9 @@ findItems = do
                    \ formatted_items \
               \ order by id desc \
               \ limit greatest(0, 20)"
-    --arg = ( In $ maybeToList maySlug
-         -- , In $ maybeToList $ itemCategoryFilter itemFilter)
-          
+
+deleteItemBySlug :: Postgres r m => Text -> m ()
+deleteItemBySlug slug = 
+  void . withConn $ \conn -> execute conn qry (Only slug)
+    where
+      qry = "delete from items where slug = ?"
