@@ -8,10 +8,8 @@ module Core.Item.Controller
 
 import ClassyPrelude hiding (delete)
 import Core.Item.Types
-import Web.Slug (Slug)
 import Web.Scotty.Internal.Types (ScottyT, ScottyError, ActionT)
 import Web.Scotty.Trans
-import Web.Scotty (ScottyM)
 import qualified Text.Digestive.Form as DF
 import Platform.JSONUtil
 import Text.Digestive.Form ((.:))
@@ -22,6 +20,7 @@ class Monad m => Service m where
   getItems :: m [Item]
   getItem :: Text -> m (Either ItemError Item)
   createItem :: ItemIntent -> m (Either ItemError Item)
+  getItemsByCategory :: Text -> m (Either ItemError [Item])
 
 routes :: (Service m, MonadIO m) => ScottyT LText m ()
 routes = do 
@@ -29,6 +28,11 @@ routes = do
   get "/api/items" $ do
     result <- lift getItems
     json $ ItemsWrapper result (ClassyPrelude.length result)
+    
+  get "/api/items/:category" $ do
+      category <- param "category"
+      result <- stopIfError itemErrorHandler $ getItemsByCategory category
+      json $ ItemsWrapper result (ClassyPrelude.length result)
     
   post "/api/items" $ do
     req <- body
@@ -56,6 +60,12 @@ itemErrorHandler err = case err of
     json err
   ItemErrorNotAllowed _ -> do
     status status403
+    json err
+  ItemErrorBadJSON _ -> do
+    status status400
+    json err
+  ItemErrorCategoryNotFound _ -> do
+    status status404
     json err
 
 --- * Forms

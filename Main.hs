@@ -40,11 +40,13 @@ instance ItemController.Service AppT where
   getItem = ItemService.getItem
   getItems = ItemService.getItems
   createItem = ItemService.createItem
+  getItemsByCategory = ItemService.getItemsByCategory
 
 instance ItemService.ItemRepo AppT where
   findItems = ItemDAO.findItems
   addItem = ItemDAO.addItem
   findItem = ItemDAO.findItem
+  findItemsByCategory = ItemDAO.findItemsByCategory
 
 instance ItemService.TimeRepo AppT where
   currentTime = liftIO getCurrentTime

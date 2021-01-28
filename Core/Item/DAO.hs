@@ -29,6 +29,18 @@ findItem slug =
                    \ items \
                \ where \
                    \ slug = ?"
+                   
+findItemsByCategory :: Postgres r m => Text -> m [Item]
+findItemsByCategory category = 
+  withConn $ \conn -> query conn qry (Only category)
+  where qry = "select \
+                   \ slug, name, description, category, price, image \
+               \ from \
+                   \ items \
+               \ where \
+                   \ category = ? \
+               \ order by name desc \
+               \ limit greatest(0, 20)"
                           
 findItems :: Postgres r m => m [Item]
 findItems = do 

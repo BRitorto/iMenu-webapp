@@ -30,7 +30,7 @@ data ItemFilter = ItemFilter
   , itemCategoryFilter :: Maybe Text
   } deriving (Eq, Show)
 
-data ItemError = ItemErrorNotFound Text | ItemErrorNotAllowed Text | ItemErrorBadJSON String deriving (Eq, Show)
+data ItemError = ItemErrorNotFound Text | ItemErrorNotAllowed Text | ItemErrorBadJSON String | ItemErrorCategoryNotFound Text deriving (Eq, Show)
 data ItemsWrapper i = ItemsWrapper { itemsWrapperItems :: [i], itemsWrapperItemsCount :: Int } deriving (Eq, Show)
 newtype ItemWrapper i = ItemWrapper { itemWrapperItem :: i } deriving (Eq, Show)
 

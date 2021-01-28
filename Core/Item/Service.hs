@@ -8,7 +8,6 @@ import ClassyPrelude
 import Control.Monad.Except (runExceptT, lift, throwError)
 import System.Posix.Types (EpochTime)
 import Data.Convertible (convert)
-import Data.Maybe
 
 getItems :: (ItemRepo m) => m [Item]
 getItems = findItems
@@ -20,12 +19,12 @@ getItem slug = runExceptT $ do
     [item] -> return item
     _ -> throwError $ ItemErrorNotFound slug
     
---getItemsByCategory :: (ItemRepo m) => Text -> m (Either ItemError Item)
---getItemsByCategory category = runExceptT $ do
- -- result <- lift $ findItems Nothing (ItemFilter Nothing Nothing (Just category))
- -- case result of
- --   [item] -> return item
- --   _ -> throwError $ ItemErrorNotFound category
+getItemsByCategory :: (ItemRepo m) => Text -> m (Either ItemError [Item])
+getItemsByCategory category = runExceptT $ do
+ result <- lift $ findItemsByCategory category
+ case result of
+   (_:_) -> return result
+   [] -> throwError $ ItemErrorCategoryNotFound category
     
 createItem :: (ItemRepo m, TimeRepo m) => ItemIntent -> m (Either ItemError Item)
 createItem param = do 
@@ -59,6 +58,7 @@ readMaybeDouble = readMay
 
 class (Monad m) => ItemRepo m where
   findItems :: m [Item]
+  findItemsByCategory :: Text -> m [Item]
   findItem :: Text -> m [Item]
   --deleteItemBySlug :: Slug -> m ()
   addItem :: Item -> Text -> m ()
