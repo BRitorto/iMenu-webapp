@@ -31,4 +31,4 @@ categoryExists name = do
       [Category _] -> return $ Just True
       _ -> return $ Just False
   where
-    qry = "select * from categories where name = ? limit 1"
+    qry = "select name from categories where name = ? limit 1"
