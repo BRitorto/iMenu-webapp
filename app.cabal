@@ -15,15 +15,20 @@ executable app
   main-is:             Main.hs
   other-extensions:    OverloadedStrings
   other-modules:       Client.CSS
-                       Platform.Home
                        Views.Home
                        Views.Utils
                        Core.Item.Controller
                        Core.Item.Types
-                       Platform.Types
                        Core.Item.DAO
                        Core.Item.Service
+                       Core.Category.Controller
+                       Core.Category.Service
+                       Core.Category.DAO
+                       Core.Category.Types
+                       Platform.Home
+                       Platform.Types
                        Platform.Postgres
+                       Platform.JSONUtil
   build-depends:       base >=4.3.1,
                        wai-extra,
                        wai-cors,

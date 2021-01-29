@@ -9,9 +9,6 @@ import Core.Item.Types
 import Platform.Postgres
 import ClassyPrelude (Text, void)
 
-foo :: (a -> Either [Char] (c, b)) -> a -> c
-foo f = fst . either error id . f
-
 addItem :: Postgres r m => Item -> Text -> m ()
 addItem param slug =
   void . withConn $ \conn -> execute conn qry 

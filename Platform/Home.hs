@@ -14,12 +14,14 @@ import Network.Wai (Response)
 import Network.Wai.Middleware.Cors
 
 import qualified Core.Item.Controller as ItemController
+import qualified Core.Category.Controller as CategoryController
+
 import System.Environment (lookupEnv)
 import Network.Wai.Middleware.HttpAuth (basicAuth, basicAuth', AuthSettings, authIsProtected)
 import Data.SecureMem (secureMemFromByteString, SecureMem)
 import Network.HTTP.Types.URI (queryToQueryText)
 
-type App r m = (ItemController.Service m, MonadIO m)
+type App r m = (ItemController.Service m, CategoryController.Service m, MonadIO m)
 
 main :: (App r m) => (m Response -> IO Response) -> IO ()
 main runner = do
@@ -50,6 +52,7 @@ routes = do
   -- feature routes
   ItemController.routes
   ItemController.adminRoutes
+  CategoryController.routes
   
   -- health
   get "/api/health" $

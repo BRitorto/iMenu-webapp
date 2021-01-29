@@ -8,6 +8,10 @@ import Core.Item.Controller as ItemController
 import Core.Item.Service as ItemService
 import Core.Item.DAO as ItemDAO
 
+import Core.Category.Controller as CategoryController
+import Core.Category.Service as CategoryService
+import Core.Category.DAO as CategoryDAO
+
 import Platform.Postgres as Postgres
 import qualified Platform.Home as Home
 import ClassyPrelude
@@ -39,6 +43,14 @@ instance ItemService.ItemRepo AppT where
   findItemsByCategory = ItemDAO.findItemsByCategory
   deleteItemBySlug = ItemDAO.deleteItemBySlug
   updateItemBySlug = ItemDAO.updateItemBySlug
+
+instance CategoryController.Service AppT where
+  createCategory = CategoryService.createCategory
+
+instance CategoryService.CategoryRepo AppT where
+  addCategory = CategoryDAO.addCategory
+  findCategoryByName = CategoryDAO.findCategoryByName
+  categoryExists = CategoryDAO.categoryExists
 
 instance ItemService.TimeRepo AppT where
   currentTime = liftIO getCurrentTime

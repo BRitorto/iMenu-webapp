@@ -11,8 +11,6 @@ import Network.HTTP.Types.Status
 import qualified Text.Digestive.Form as DF
 import qualified Text.Digestive.View as DF
 import qualified Text.Digestive.Aeson as DF
-import Language.Haskell.TH.Syntax
-import Data.Aeson.TH
 import Web.Scotty.Internal.Types (ScottyError, ActionT)
 
 type InputViolations = Map Text [Text]

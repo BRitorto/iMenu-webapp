@@ -1,4 +1,3 @@
-create extension citext;
 create extension pgcrypto;
 
 create table items (
@@ -11,6 +10,11 @@ create table items (
                           image text not null,
                           created_at timestamptz not null,
                           updated_at timestamptz not null
+);
+
+create table categories (
+                       id bigserial primary key not null,
+                       name text not null unique
 );
 
 INSERT INTO items
