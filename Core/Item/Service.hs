@@ -36,6 +36,13 @@ deleteItem :: (ItemRepo m) => Text -> m (Either ItemError ())
 deleteItem slug = runExceptT $ do
   lift $ deleteItemBySlug slug
 
+updateItem :: (ItemRepo m, TimeRepo m) => Text -> ItemIntent -> m (Either ItemError Item)
+updateItem slug param = do 
+  _ <- getItem slug
+  newSlug <- genSlug' (itemIntentName param)
+  updateItemBySlug slug param newSlug
+  getItem newSlug
+  
 genSlug' :: (TimeRepo m) => Text -> m Text
 genSlug' name = genSlug name ClassyPrelude.. convert <$> currentTime
 
@@ -62,6 +69,7 @@ class (Monad m) => ItemRepo m where
   findItem :: Text -> m [Item]
   deleteItemBySlug :: Text -> m ()
   addItem :: Item -> Text -> m ()
+  updateItemBySlug :: Text -> ItemIntent -> Text -> m ()
   
 class (Monad m) => TimeRepo m where
   currentTime :: m UTCTime

@@ -62,3 +62,13 @@ deleteItemBySlug slug =
   void . withConn $ \conn -> execute conn qry (Only slug)
     where
       qry = "delete from items where slug = ?"
+
+updateItemBySlug :: Postgres r m => Text -> ItemIntent -> Text -> m ()
+updateItemBySlug slug param newSlug =
+  void . withConn $ \conn -> execute conn qry 
+      (newSlug, itemIntentName param, itemIntentDescription param, itemIntentCategory param, itemIntentPrice param,  itemIntentImage param, slug)
+  where
+    qry = "update items \
+          \set slug = ?, name = coalesce(?, name), description = coalesce(?, description), \
+          \    category = coalesce(?, category), price = coalesce(?, price), image = coalesce(?, image), updated_at = now() \
+          \where slug = ?"

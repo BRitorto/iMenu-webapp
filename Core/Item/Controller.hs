@@ -3,6 +3,7 @@
 
 module Core.Item.Controller
       ( routes
+      , adminRoutes
       , Service(..) 
       ) where
 
@@ -15,11 +16,6 @@ import Platform.JSONUtil
 import Text.Digestive.Form ((.:))
 import Network.HTTP.Types
 import Data.Aeson (eitherDecode)
-import Data.SecureMem
-import Network.Wai.Middleware.HttpAuth
-
-password :: SecureMem
-password = secureMemFromByteString "An7aLasi"
 
 class Monad m => Service m where
   getItems :: m [Item]
@@ -27,6 +23,7 @@ class Monad m => Service m where
   createItem :: ItemIntent -> m (Either ItemError Item)
   getItemsByCategory :: Text -> m (Either ItemError [Item])
   deleteItem :: Text -> m (Either ItemError ())
+  updateItem :: Text -> ItemIntent -> m (Either ItemError Item)
 
 routes :: (Service m, MonadIO m) => ScottyT LText m ()
 routes = do 
@@ -39,25 +36,39 @@ routes = do
       category <- param "category"
       result <- stopIfError itemErrorHandler $ getItemsByCategory category
       json $ ItemsWrapper result (ClassyPrelude.length result)
-    
-  post "/api/items" $ do
-    req <- body
-    let parsedBody = (eitherDecode req :: Either String ItemIntent)
-    case parsedBody of
-      Left e -> do 
-        status badRequest400
-        json (ItemErrorBadJSON e)
-      Right i -> do
-        result <- stopIfError itemErrorHandler $ createItem i
-        json $ ItemWrapper result
-  
-  delete "/api/items/:slug" $ do
-    slug <- param "slug"
-    stopIfError itemErrorHandler $ deleteItem slug
-    json $ asText "Item deleted"
+ 
+adminRoutes :: (Service m, MonadIO m) => ScottyT LText m ()
+adminRoutes = do  
+      
+  delete "/admin/items/:slug" $ do
+      slug <- param "slug"
+      stopIfError itemErrorHandler $ deleteItem slug
+      json $ asText "Item deleted"
 
-  middleware $ basicAuth (\u p -> return $ u == "user" && secureMemFromByteString p == password) "hello"
+  post "/admin/items" $ do
+      req <- body
+      let parsedBody = (eitherDecode req :: Either String ItemIntent)
+      case parsedBody of
+        Left e -> do 
+          status badRequest400
+          json (ItemErrorBadJSON e)
+        Right i -> do
+          result <- stopIfError itemErrorHandler $ createItem i
+          json $ ItemWrapper result
   
+  put "/admin/items/:slug" $ do
+      req <- body
+      slug <- param "slug"
+      let parsedBody = (eitherDecode req :: Either String ItemIntent)
+      case parsedBody of
+        Left e -> do 
+          status badRequest400
+          json (ItemErrorBadJSON e)
+        Right i -> do
+          result <- stopIfError itemErrorHandler $ updateItem slug i
+          json $ ItemWrapper result
+ 
+
 --- * Errors
 
 itemErrorHandler :: (ScottyError e, Monad m) => ItemError -> ActionT e m ()

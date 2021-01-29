@@ -30,6 +30,7 @@ instance ItemController.Service AppT where
   createItem = ItemService.createItem
   getItemsByCategory = ItemService.getItemsByCategory
   deleteItem = ItemService.deleteItem
+  updateItem = ItemService.updateItem
 
 instance ItemService.ItemRepo AppT where
   findItems = ItemDAO.findItems
@@ -37,6 +38,7 @@ instance ItemService.ItemRepo AppT where
   findItem = ItemDAO.findItem
   findItemsByCategory = ItemDAO.findItemsByCategory
   deleteItemBySlug = ItemDAO.deleteItemBySlug
+  updateItemBySlug = ItemDAO.updateItemBySlug
 
 instance ItemService.TimeRepo AppT where
   currentTime = liftIO getCurrentTime
