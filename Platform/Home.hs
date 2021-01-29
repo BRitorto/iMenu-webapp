@@ -5,11 +5,8 @@ module Platform.Home
     ( main
     ) where
 
-import ClassyPrelude (MonadIO, LText, fromMaybe, readMay, Text, member, second)
 import Web.Scotty.Trans
 import Network.HTTP.Types.Status
-import Network.Wai.Handler.WarpTLS (runTLS, tlsSettings)
-import Network.Wai.Handler.Warp (defaultSettings, setPort)
 import Network.Wai (Response)
 import Network.Wai.Middleware.Cors
 
@@ -17,9 +14,7 @@ import qualified Core.Item.Controller as ItemController
 import qualified Core.Category.Controller as CategoryController
 
 import System.Environment (lookupEnv)
-import Network.Wai.Middleware.HttpAuth (basicAuth, basicAuth', AuthSettings, authIsProtected)
-import Data.SecureMem (secureMemFromByteString, SecureMem)
-import Network.HTTP.Types.URI (queryToQueryText)
+import ClassyPrelude (LText, MonadIO, fromMaybe, readMay)
 
 type App r m = (ItemController.Service m, CategoryController.Service m, MonadIO m)
 

@@ -1,5 +1,3 @@
-{-# LANGUAGE TemplateHaskell #-}
-
 module Platform.Types where
 
 import Language.Haskell.TH.Syntax

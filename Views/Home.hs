@@ -16,7 +16,6 @@ import Text.Blaze.Html5.Attributes (charset, class_, content, href,
                                    placeholder, rel, src, type_, label)
 import Views.Utils (blaze, pet)
 import Web.Scotty (ActionM)
-import Text.Digestive.View (View)
 
 layout :: Html -> Html -> Html
 layout t b = docTypeHtml $ do
