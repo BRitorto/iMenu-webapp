@@ -25,6 +25,10 @@ executable app
                        Core.Category.Service
                        Core.Category.DAO
                        Core.Category.Types
+                       Core.Order.Types
+                       Core.Order.Service
+                       Core.Order.DAO
+                       Core.Order.Controller
                        Platform.Home
                        Platform.Types
                        Platform.Postgres

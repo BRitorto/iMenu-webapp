@@ -7,16 +7,26 @@ module Platform.Home
 
 import Web.Scotty.Trans
 import Network.HTTP.Types.Status
-import Network.Wai (Response)
+import Network.Wai (Response, Request, pathInfo)
 import Network.Wai.Middleware.Cors
 
 import qualified Core.Item.Controller as ItemController
 import qualified Core.Category.Controller as CategoryController
+import qualified Core.Order.Controller as OrderController
 
 import System.Environment (lookupEnv)
 import ClassyPrelude (LText, MonadIO, fromMaybe, readMay)
+import Network.Wai.Middleware.HttpAuth (AuthSettings, authIsProtected, basicAuth)
 
-type App r m = (ItemController.Service m, CategoryController.Service m, MonadIO m)
+type App r m = (ItemController.Service m, CategoryController.Service m, OrderController.Service m, MonadIO m)
+
+authSettings :: AuthSettings
+authSettings = "My Realm" { authIsProtected = needsAuth }
+
+needsAuth :: Request -> IO Bool
+needsAuth req = return $ case pathInfo req of
+  "admin":_ -> True
+  _         -> False
 
 main :: (App r m) => (m Response -> IO Response) -> IO ()
 main runner = do
@@ -35,9 +45,8 @@ routes = do
     , corsMethods = "PUT":"DELETE":simpleMethods
     }
     
-  -- middleware $ basicAuth 
-      -- (\u p -> return $ u == "username" && p == "password") 
-      -- "My Realm"
+  -- auth
+  middleware $ basicAuth (\u p -> return $ u == "username" && p == "password") authSettings 
   
   -- errors
   defaultHandler $ \str -> do
@@ -48,6 +57,9 @@ routes = do
   ItemController.routes
   ItemController.adminRoutes
   CategoryController.routes
+  CategoryController.adminRoutes
+  OrderController.adminRoutes
+  OrderController.routes
   
   -- health
   get "/api/health" $

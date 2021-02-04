@@ -2,6 +2,7 @@
 
 module Core.Category.Controller 
       ( routes 
+      , adminRoutes
       , Service(..) 
       ) where
 
@@ -16,16 +17,23 @@ import Platform.JSONUtil
 routes :: (Service m, MonadIO m) => ScottyT LText m ()
 routes =  do
   
-    post "/admin/category" $ do
-         req <- body
-         let parsedBody = (eitherDecode req :: Either String Category)
-         case parsedBody of
-           Left e -> do 
-             status badRequest400
-             json (CategoryErrorBadJSON e)
-           Right c -> do
-             result <- stopIfError categoryErrorHandler $ createCategory (categoryName c)
-             json $ CategoryWrapper result
+  get "/api/categories" $ do
+    result <- lift getCategories
+    json $ CategoriesWrapper result (ClassyPrelude.length result)
+
+adminRoutes :: (Service m, MonadIO m) => ScottyT LText m ()
+adminRoutes =  do
+  
+  post "/admin/category" $ do
+     req <- body
+     let parsedBody = (eitherDecode req :: Either String Category)
+     case parsedBody of
+       Left e -> do 
+         status badRequest400
+         json (CategoryErrorBadJSON e)
+       Right c -> do
+         result <- stopIfError categoryErrorHandler $ createCategory (categoryName c)
+         json $ CategoryWrapper result
 
 --- * Errors
 
@@ -43,4 +51,4 @@ categoryErrorHandler err = case err of
 
 class Monad m => Service m where
   createCategory :: Text -> m (Either CategoryError Category)
-  
+  getCategories :: m [Category]

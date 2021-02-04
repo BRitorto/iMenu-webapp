@@ -14,6 +14,14 @@ addCategory param =
   where
     qry = "insert into categories (name, created_at) values (?, now())"
 
+findCategories :: Postgres r m => m [Category]
+findCategories = do 
+  withConn $ \conn -> query_ conn qry
+  where qry = "select \
+                 \ name \
+               \ from \
+                 \ categories"
+
 findCategoryByName :: Postgres r m => Text -> m [Category]
 findCategoryByName name = 
   withConn $ \conn -> query conn qry (Only name)

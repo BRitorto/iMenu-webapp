@@ -1,5 +1,6 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE AllowAmbiguousTypes #-}
 
 module Core.Item.DAO where
 
@@ -18,7 +19,7 @@ addItem param slug =
           \values (?, ?, ?, ?, ?, ?, now(), now())"
 
 findItem :: Postgres r m => Text -> m [Item]
-findItem slug = 
+findItem slug =
   withConn $ \conn -> query conn qry (Only slug)
   where qry = "select \
                    \ slug, name, description, category, price, image \
@@ -26,9 +27,9 @@ findItem slug =
                    \ items \
                \ where \
                    \ slug = ?"
-                   
+
 findItemsByCategory :: Postgres r m => Text -> m [Item]
-findItemsByCategory category = 
+findItemsByCategory category =
   withConn $ \conn -> query conn qry (Only category)
   where qry = "select \
                    \ slug, name, description, category, price, image \
@@ -38,7 +39,7 @@ findItemsByCategory category =
                    \ category = ? \
                \ order by name desc \
                \ limit greatest(0, 20)"
-                          
+
 findItems :: Postgres r m => m [Item]
 findItems = do 
   withConn $ \conn -> query_ conn qry
@@ -55,17 +56,24 @@ findItems = do
               \ limit greatest(0, 20)"
 
 deleteItemBySlug :: Postgres r m => Text -> m ()
-deleteItemBySlug slug = 
+deleteItemBySlug slug =
   void . withConn $ \conn -> execute conn qry (Only slug)
     where
       qry = "delete from items where slug = ?"
 
 updateItemBySlug :: Postgres r m => Text -> ItemIntent -> Text -> m ()
 updateItemBySlug slug param newSlug =
-  void . withConn $ \conn -> execute conn qry 
+  void . withConn $ \conn -> execute conn qry
       (newSlug, itemIntentName param, itemIntentDescription param, itemIntentCategory param, itemIntentPrice param,  itemIntentImage param, slug)
   where
     qry = "update items \
           \set slug = ?, name = coalesce(?, name), description = coalesce(?, description), \
           \    category = coalesce(?, category), price = coalesce(?, price), image = coalesce(?, image), updated_at = now() \
           \where slug = ?"
+
+itemsExist :: Postgres r m => [Text] -> m (Maybe Bool)
+itemsExist slugs = do
+  results <- withConn $ \conn -> execute conn qry slugs
+  if fromIntegral results == length slugs then return $ Just True else return $ Just False
+  where
+    qry = "select count(distinct slug) from items where slug in ?"

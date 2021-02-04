@@ -27,7 +27,11 @@ getCategory name = runExceptT $ do
     [category] -> return category
     _ -> throwError $ CategoryNotFound name
   
+getCategories :: (CategoryRepo m) => m [Category]
+getCategories = findCategories
+
 class (Monad m) => CategoryRepo m where
     addCategory :: Text -> m ()
     findCategoryByName :: Text -> m [Category]
     categoryExists :: Text -> m (Maybe Bool)
+    findCategories :: m [Category]

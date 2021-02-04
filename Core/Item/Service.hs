@@ -35,7 +35,7 @@ createItem param = runExceptT $ do
   lift $ addItem (adaptItem param slug) slug
   ExceptT $ getItem slug
 
-validateCategoryExists :: (CategoryRepo m ) => Text -> m (Either ItemError ())
+validateCategoryExists :: (CategoryRepo m) => Text -> m (Either ItemError ())
 validateCategoryExists param = runExceptT $ do
   result <- lift $ categoryExists param
   case result of
@@ -80,6 +80,7 @@ class (Monad m) => ItemRepo m where
   deleteItemBySlug :: Text -> m ()
   addItem :: Item -> Text -> m ()
   updateItemBySlug :: Text -> ItemIntent -> Text -> m ()
+  itemsExist :: [Text] -> m (Maybe Bool)
 
 class (Monad m) => TimeRepo m where
   currentTime :: m UTCTime

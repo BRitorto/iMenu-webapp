@@ -3,7 +3,7 @@
 module Main 
       ( main
       ) where
-        
+
 import Core.Item.Controller as ItemController
 import Core.Item.Service as ItemService
 import Core.Item.DAO as ItemDAO
@@ -11,6 +11,10 @@ import Core.Item.DAO as ItemDAO
 import Core.Category.Controller as CategoryController
 import Core.Category.Service as CategoryService
 import Core.Category.DAO as CategoryDAO
+
+import Core.Order.Controller as OrderController
+import Core.Order.Service as OrderService
+import Core.Order.DAO as OrderDAO
 
 import Platform.Postgres as Postgres
 import qualified Platform.Home as Home
@@ -43,14 +47,29 @@ instance ItemService.ItemRepo AppT where
   findItemsByCategory = ItemDAO.findItemsByCategory
   deleteItemBySlug = ItemDAO.deleteItemBySlug
   updateItemBySlug = ItemDAO.updateItemBySlug
+  itemsExist = ItemDAO.itemsExist
 
 instance CategoryController.Service AppT where
   createCategory = CategoryService.createCategory
+  getCategories = CategoryService.getCategories
 
 instance CategoryService.CategoryRepo AppT where
   addCategory = CategoryDAO.addCategory
   findCategoryByName = CategoryDAO.findCategoryByName
   categoryExists = CategoryDAO.categoryExists
+  findCategories = CategoryDAO.findCategories
+
+instance OrderController.Service AppT where
+  getOrder = OrderService.getOrder
+  getOrders = OrderService.getOrders
+  createOrder = OrderService.createOrder
+  finishOrder = OrderService.finishOrder
+  
+instance OrderService.OrderRepo AppT where
+  addOrder = OrderDAO.addOrder
+  findOrderByTable = OrderDAO.findOrderByTable
+  deleteOrderByTable = OrderDAO.deleteOrderByTable
+  findOrders = OrderDAO.findOrders
 
 instance ItemService.TimeRepo AppT where
   currentTime = liftIO getCurrentTime
