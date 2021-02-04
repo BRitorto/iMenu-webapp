@@ -22,7 +22,13 @@ cabal.project.local~
 .HTF/
 .ghc.environment.*
 .idea
-
+/node_modules
+/.pnp
+.pnp.js
+package-lock.json
+/build
+.npm
+.DS_Store
 
 # Project exclude paths
 /out/

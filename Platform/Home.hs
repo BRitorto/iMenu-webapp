@@ -35,7 +35,7 @@ main runner = do
   where
     acquirePort = do
       port <- fromMaybe "" <$> lookupEnv "PORT"
-      return . fromMaybe 3000 $ readMay port
+      return . fromMaybe 3080 $ readMay port
 
 routes :: (App r m) => ScottyT LText m ()
 routes = do
