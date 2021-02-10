@@ -1,81 +1,128 @@
-import logo from './logo.svg';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Component} from "react";
-import {getAllItems} from "./services/ItemService";
-import {Items} from './components/Items'
-import {DisplayBoard} from "./components/DisplayBoard";
+import Items from './components/Items'
 import {Header} from "./components/Header";
+import Order from "./components/Order"
+import Admin from "./components/Admin"
+import {createOrder, getAllCategories} from "./services/ItemService";
+import Table from "./components/Table"
+import {Ops} from "./components/Ops"
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route
+} from "react-router-dom";
 
 class App extends Component {
 
   state = {
     items: [],
-    numberOfItems: 0
+    numberOfItems: 0,
+    orderItems: [],
+    ordered: false,
+    table: 1,
+    error: false,
+    categories: []
   }
 
-  getAllItems = () => {
-      getAllItems()
-        .then(items => {
-            console.log(items)
-            this.setState({items: items, numberOfItems: items.length})
-        });
+    addItem = (item) => {
+        this.setState({ orderItems: [...this.state.orderItems, item] });
     }
 
-    render() {
-        return (
-            <div className="App">
-                <Header></Header>
-                <div className="container mrgnbtm">
-                    <div className="row">
-                        <div className="col-md-4">
-                            <DisplayBoard
-                                numberOfItems={this.state.numberOfItems}
-                                getAllItems={this.getAllItems}
-                            >
-                            </DisplayBoard>
-                        </div>
+    removeItem = (item) => {
+        const array = [...this.state.orderItems];
+        const index = array.indexOf(item)
+        if (index !== -1) {
+            array.splice(index, 1);
+            this.setState({orderItems: array});
+        }
+    }
+
+    sendOrder = () => {
+      createOrder(this.state.orderItems, this.state.table).then(response => response == null ? this.setState({error: true}) : this.setState({ordered: true}))
+    }
+
+    chooseTable = (e) => {
+      this.setState({table: parseInt(e.target.value)})
+      console.log(this.state.table)
+    }
+
+    Menu = () => {
+          const mainMenu = (<div className="App">
+            <div className="container-fluid">
+                <div className="row mrgnbtm">
+                    <div className="col-8">
+                        <Items addItem={this.addItem.bind(this)}/>
+                    </div>
+                    <div className="col-4">
+                        <Order items={this.state.orderItems}
+                               key={this.state.orderItems.length}
+                               removeItem={this.removeItem.bind(this)}
+                               sendOrder={this.sendOrder.bind(this)}
+                        />
                     </div>
                 </div>
                 <div className="row mrgnbtm">
-                    <Items items={this.state.items}></Items>
+                    <div className="container-fluid">
+                        <div className="col-2">
+                            <Table chooseTable={this.chooseTable.bind(this)}/>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>);
+
+        const ordered = (<div className="App">
+        </div>);
+
+        const error = (<div className="App">
+            <Ops></Ops>
+        </div>)
+
+        if (this.state.error) {
+            return error;
+        }
+        return (this.state.ordered ? ordered : mainMenu);
+    }
+
+    Admin = () => {
+        return (
+            <div className="App">
+            <div className="container-fluid">
+                <div className="row mrgnbtm justify-content-md-center">
+                    <Admin/>
+                </div>
+            </div>
+        </div>);
+    }
+
+    render() {
+        return(
+            <Router>
+                    <div className="container-fluid">
+                        <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+                            <ul className="navbar-nav mr-auto">
+                                <li className="nav-item">
+                                    <a className="nav-link" href="/">iMenu</a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link" href="/admin">Administrator</a>
+                                </li>
+                            </ul>
+                    </nav>
+                    </div>
+                    <Switch>
+                        <Route path="/admin">
+                            {this.Admin()}
+                        </Route>
+                        <Route path="/">
+                            {this.Menu()}
+                        </Route>
+                    </Switch>
+            </Router>
         );
     }
 }
-
-
-/*function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
-
-
-                        <div className="col-md-8">
-                            <CreateUser
-                                user={this.state.user}
-                                onChangeForm={this.onChangeForm}
-                                createUser={this.createUser}
-                            >
-                            </CreateUser>
-                        </div>
-*/
 
 export default App;

@@ -14,10 +14,7 @@ cabal-version:       >= 1.10
 executable app
   main-is:             Main.hs
   other-extensions:    OverloadedStrings
-  other-modules:       Client.CSS
-                       Views.Home
-                       Views.Utils
-                       Core.Item.Controller
+  other-modules:       Core.Item.Controller
                        Core.Item.Types
                        Core.Item.DAO
                        Core.Item.Service

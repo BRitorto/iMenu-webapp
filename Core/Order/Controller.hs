@@ -16,16 +16,7 @@ import Data.Aeson (eitherDecode)
 
 routes :: (Service m, MonadIO m) => ScottyT LText m ()
 routes = do 
-  
-  get "/api/orders" $ do
-    result <- lift getOrders
-    json $ OrdersWrapper result (ClassyPrelude.length result)
-
-  get "/api/orders/:table" $ do
-    table <- param "table"
-    result <- stopIfError orderErrorHandler $ getOrder table
-    json $ OrderWrapper result
-      
+        
   post "/api/orders" $ do
      req <- body
      let parsedBody = (eitherDecode req :: Either String OrderIntent)
@@ -40,6 +31,15 @@ routes = do
 adminRoutes :: (Service m, MonadIO m) => ScottyT LText m ()
 adminRoutes = do
 
+  get "/admin/orders" $ do
+    result <- lift getOrders
+    json $ OrdersWrapper result (ClassyPrelude.length result)
+
+  get "/admin/orders/:table" $ do
+    table <- param "table"
+    result <- stopIfError orderErrorHandler $ getOrder table
+    json $ OrderWrapper result
+  
   delete "/admin/orders/:table" $ do
       table <- param "table"
       stopIfError orderErrorHandler $ finishOrder table

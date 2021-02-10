@@ -1,15 +1,24 @@
 .header {
   width: 100%;
-  padding: 2%;
-  background-color: burlywood;
+  padding-top: 4%;
+  padding-bottom: 2%;
+  background-color: #e57d4c;
   color: white;
   text-align: center;
 }
 
 .display-board {
   width: 100%;
-  background-color: rgb(555, 200, 789);
+  background-color: #e57d4c;
   padding: 5%;
+}
+
+.error {
+  width: 100%;
+  padding: 2%;
+  background-color: #9d2a2a;
+  color: white;
+  text-align: center;
 }
 
 .number {
@@ -21,3 +30,5 @@
 .mrgnbtm {
   margin-top: 20px;
 }
+
+.App { padding-top: 70px; }
