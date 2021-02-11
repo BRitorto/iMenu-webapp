@@ -1,6 +1,6 @@
 import React, {Component} from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {getAllItems} from "../services/ItemService";
+import {getAllItems} from "../services/Service";
 
 class Items extends Component {
 
@@ -9,6 +9,9 @@ class Items extends Component {
     itemRow(item, index) {
         return(
                 <tr key={index} className={index%2 === 0?'odd':'even'}>
+                    <td>
+                        <img width="60" height="60" src={item.image} alt="Item image"/>
+                    </td>
                     <td>{item.name}</td>
                     <td>{item.description}</td>
                     <td>{item.price}</td>
@@ -32,6 +35,7 @@ class Items extends Component {
                 <table className="table">
                     <thead>
                     <tr>
+                        <th/>
                         <th>Name</th>
                         <th>Description</th>
                         <th>Price</th>

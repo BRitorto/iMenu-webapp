@@ -2,10 +2,9 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import {Component} from "react";
 import Items from './components/Items'
-import {Header} from "./components/Header";
 import Order from "./components/Order"
 import Admin from "./components/Admin"
-import {createOrder, getAllCategories} from "./services/ItemService";
+import {createOrder} from "./services/Service";
 import Table from "./components/Table"
 import {Ops} from "./components/Ops"
 import {

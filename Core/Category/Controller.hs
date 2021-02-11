@@ -24,7 +24,7 @@ routes =  do
 adminRoutes :: (Service m, MonadIO m) => ScottyT LText m ()
 adminRoutes =  do
   
-  post "/admin/category" $ do
+  post "/admin/categories" $ do
      req <- body
      let parsedBody = (eitherDecode req :: Either String Category)
      case parsedBody of
