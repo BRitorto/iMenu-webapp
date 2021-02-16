@@ -32,7 +32,7 @@ createItem :: (ItemRepo m, TimeRepo m, CategoryRepo m) => ItemIntent -> m (Eithe
 createItem param = runExceptT $ do
   ExceptT $ validateCategoryExists (itemIntentCategory param)
   slug <- lift $ genSlug' (itemIntentName param)
-  lift $ addItem (adaptItem param slug) slug
+  lift $ addItem param slug
   ExceptT $ getItem slug
 
 validateCategoryExists :: (CategoryRepo m) => Text -> m (Either ItemError ())
@@ -59,17 +59,6 @@ genSlug' name = genSlug name ClassyPrelude.. convert <$> currentTime
 genSlug :: Text -> EpochTime -> Text
 genSlug name unixTs = maybe "invalidSlug" unSlug $ mkSlug $ ClassyPrelude.unwords [tshow unixTs, name]
 
-adaptItem :: ItemIntent -> Text -> Item
-adaptItem param slug = Item slug
-                            (itemIntentName param)
-                            (itemIntentDescription param)
-                            (itemIntentCategory param)
-                            (adaptPrice param)
-                            (itemIntentImage param)
-
-adaptPrice :: ItemIntent -> Double
-adaptPrice param = do fromMaybe 0 (readMaybeDouble (itemIntentPrice param))
-
 readMaybeDouble :: String -> Maybe Double
 readMaybeDouble = readMay
 
@@ -78,7 +67,7 @@ class (Monad m) => ItemRepo m where
   findItemsByCategory :: Text -> m [Item]
   findItem :: Text -> m [Item]
   deleteItemBySlug :: Text -> m ()
-  addItem :: Item -> Text -> m ()
+  addItem :: ItemIntent -> Text -> m ()
   updateItemBySlug :: Text -> ItemIntent -> Text -> m ()
   itemsExist :: [Text] -> m (Maybe Bool)
 

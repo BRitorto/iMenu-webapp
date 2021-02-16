@@ -4,6 +4,8 @@ import {Component} from "react";
 import Items from './components/Items'
 import Order from "./components/Order"
 import Admin from "./components/Admin"
+import AddItem from "./components/AddItem"
+import Tables from "./components/Tables"
 import {createOrder} from "./services/Service";
 import Table from "./components/Table"
 import {Ops} from "./components/Ops"
@@ -12,6 +14,7 @@ import {
     Switch,
     Route
 } from "react-router-dom";
+import {OrderSent} from "./components/OrderSent";
 
 class App extends Component {
 
@@ -51,6 +54,13 @@ class App extends Component {
           const mainMenu = (<div className="App">
             <div className="container-fluid">
                 <div className="row mrgnbtm">
+                    <div className="container-fluid">
+                        <div className="col-2">
+                            <Table chooseTable={this.chooseTable.bind(this)}/>
+                        </div>
+                    </div>
+                </div>
+                <div className="row mrgnbtm">
                     <div className="col-8">
                         <Items addItem={this.addItem.bind(this)}/>
                     </div>
@@ -62,38 +72,17 @@ class App extends Component {
                         />
                     </div>
                 </div>
-                <div className="row mrgnbtm">
-                    <div className="container-fluid">
-                        <div className="col-2">
-                            <Table chooseTable={this.chooseTable.bind(this)}/>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>);
 
-        const ordered = (<div className="App">
-        </div>);
+        const ordered = (<div className="App"><OrderSent/></div>);
 
-        const error = (<div className="App">
-            <Ops></Ops>
-        </div>)
+        const error = (<div className="App"><Ops/></div>)
 
         if (this.state.error) {
             return error;
         }
         return (this.state.ordered ? ordered : mainMenu);
-    }
-
-    Admin = () => {
-        return (
-            <div className="App">
-            <div className="container-fluid">
-                <div className="row mrgnbtm justify-content-md-center">
-                    <Admin/>
-                </div>
-            </div>
-        </div>);
     }
 
     render() {
@@ -112,10 +101,10 @@ class App extends Component {
                     </nav>
                     </div>
                     <Switch>
-                        <Route path="/admin">
-                            {this.Admin()}
-                        </Route>
-                        <Route path="/">
+                        <Route exact path="/admin" component={Admin}/>
+                        <Route path="/admin/add_item" component={AddItem}/>
+                        <Route path="/admin/tables" component={Tables}/>
+                        <Route exact path="/">
                             {this.Menu()}
                         </Route>
                     </Switch>

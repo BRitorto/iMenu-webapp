@@ -20,7 +20,7 @@ data ItemIntent = ItemIntent
   { itemIntentName :: Text
   , itemIntentDescription :: Text
   , itemIntentCategory :: Text
-  , itemIntentPrice :: String
+  , itemIntentPrice :: Double
   , itemIntentImage :: Maybe Text
   } deriving(Eq, Show)
     

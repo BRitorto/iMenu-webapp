@@ -10,10 +10,10 @@ import Core.Item.Types
 import Platform.Postgres
 import ClassyPrelude (Text, void)
 
-addItem :: Postgres r m => Item -> Text -> m ()
+addItem :: Postgres r m => ItemIntent -> Text -> m ()
 addItem param slug =
   void . withConn $ \conn -> execute conn qry 
-    (slug, itemName param, itemDescription param, itemCategory param, itemPrice param,  itemImage param)
+    (slug, itemIntentName param, itemIntentDescription param, itemIntentCategory param, itemIntentPrice param,  itemIntentImage param)
   where
     qry = "insert into items (slug, name, description, category, price, image, created_at, updated_at) \
           \values (?, ?, ?, ?, ?, ?, now(), now())"

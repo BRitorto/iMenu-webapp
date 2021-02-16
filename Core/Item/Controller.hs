@@ -76,15 +76,6 @@ itemErrorHandler err = case err of
   ItemErrorCategoryNotFound _ -> do
     status status404
     json err
-
---- * Forms
-
-createItemForm :: (Monad m) => DF.Form [Text] m ItemIntent
-createItemForm = ItemIntent <$> "name" .: DF.text Nothing
-                            <*> "description" .: DF.text Nothing
-                            <*> "category" .: DF.text Nothing
-                            <*> "price" .: DF.string Nothing
-                            <*> "image" .: DF.optionalText Nothing
                             
 class Monad m => Service m where
   getItems :: m [Item]
