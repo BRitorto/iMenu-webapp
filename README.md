@@ -6,9 +6,12 @@ A Scotty-based webapp. A way for customers to browse through a restaurant's menu
 
 Using:
 - Scotty
-- Twitter Bootstrap 3.0
-- HTML5 Boilerplate
-- Heroku
 - PostgreSQL
+- React
+- Twitter Bootstrap 3.0
+
+Backend: runs on port 3080
+
+Frontend: runs on port 3000
 
 
